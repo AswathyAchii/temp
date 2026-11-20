@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#fff7f0">
+<meta name="referrer" content="no-referrer">
 <title>A very important document for Arjun</title>
 <style>
   :root{
@@ -106,6 +107,9 @@
   .question{margin:20px 0;animation:rise .5s ease both}
   .question .q-title{display:block;font-weight:700;line-height:1.5;margin-bottom:4px}
   .question .q-ml{display:block;color:var(--muted);line-height:1.6;font-size:.95rem;margin-bottom:10px}
+  .ml-hint{text-align:center;margin:0 auto 18px;padding:8px 14px;width:fit-content;max-width:100%;background:#fdeeed;border-radius:999px;color:#8b4f57;font-size:.92rem;line-height:1.5}
+  .q-speak{display:inline-grid;place-items:center;width:32px;height:32px;margin-left:6px;vertical-align:middle;border:1px solid #ddc9bf;border-radius:50%;background:#fff8f3;font-size:.95rem;line-height:1;padding:0}
+  .q-speak.playing{background:var(--ink);border-color:var(--ink);animation:nudge 1s ease-in-out infinite}
   .question .q-note{display:block;background:#fff4ec;border-left:3px solid #e8b9a5;border-radius:6px;padding:8px 12px;margin:0 0 10px;font-size:.88rem;line-height:1.55;color:#7a625b}
   .question .q-note span{display:block;margin-top:3px}
   .opts{display:flex;flex-direction:column;gap:8px}
@@ -286,6 +290,7 @@
 
       <section class="questionnaire" id="questionnaire">
         <h3>Before you read… 📝</h3>
+        <p class="ml-hint" lang="ml">കണ്ണ് വേദനിക്കുമെങ്കിൽ 🔊 സ്പീക്കർ ബട്ടണുകൾ ഉപയോഗിക്ക്</p>
         <div id="quiz"></div>
         <div class="quiz-actions">
           <button class="send" id="toLetter" type="button">Now read my letter 💌</button>
@@ -619,6 +624,65 @@
     }
   ];
 
+  // ---------- Malayalam speaker for each question ----------
+  // Uses the phone's own Malayalam voice if it has one (some Android phones),
+  // otherwise Google Translate's Malayalam voice (iPhone, laptops). Needs internet.
+  const mlAudio = new Audio();
+  let mlBtn = null, mlSession = 0;
+
+  function mlStop() {
+    mlSession++;
+    mlAudio.pause();
+    if (window.speechSynthesis) speechSynthesis.cancel();
+    if (mlBtn) { mlBtn.classList.remove('playing'); mlBtn.textContent = '🔊'; }
+    mlBtn = null;
+  }
+
+  function mlChunks(text, max = 180) {
+    const parts = text.match(/[^.?!,]+[.?!,]?/g) || [text];
+    const out = [];
+    parts.forEach(p => {
+      p = p.trim();
+      if (!p) return;
+      if (out.length && (out[out.length - 1] + ' ' + p).length <= max) out[out.length - 1] += ' ' + p;
+      else out.push(p.slice(0, max));
+    });
+    return out;
+  }
+
+  function speakMl(text, btn) {
+    const wasThis = mlBtn === btn;
+    stopReading();
+    mlStop();
+    if (wasThis) return; // second tap = stop
+    mlBtn = btn;
+    btn.classList.add('playing');
+    btn.textContent = '⏹';
+    const id = ++mlSession;
+    const done = () => { if (id === mlSession) mlStop(); };
+    const clean = text.replace(/["“”]/g, '').replace(/[\p{Extended_Pictographic}\u{FE0F}]/gu, '');
+
+    const mlVoice = window.speechSynthesis && speechSynthesis.getVoices().find(v => (v.lang || '').toLowerCase().startsWith('ml'));
+    if (mlVoice) {
+      const u = new SpeechSynthesisUtterance(clean);
+      u.voice = mlVoice; u.lang = mlVoice.lang; u.rate = 0.9;
+      u.onend = done; u.onerror = done;
+      speechSynthesis.speak(u);
+      return;
+    }
+    const chunks = mlChunks(clean);
+    let i = 0;
+    const playNext = () => {
+      if (id !== mlSession) return;
+      if (i >= chunks.length) return done();
+      mlAudio.src = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=ml&client=tw-ob&q=' + encodeURIComponent(chunks[i++]);
+      mlAudio.play().catch(done);
+    };
+    mlAudio.onended = playNext;
+    mlAudio.onerror = done;
+    playNext();
+  }
+
   // `right` can be one index or a list of indexes.
   const isGraded = item => item.right !== undefined;
   const isRight = (item, idx) => [].concat(item.right).includes(idx);
@@ -630,13 +694,15 @@
     wrap.className = 'question';
     wrap.style.animationDelay = `${0.1 + qi * 0.1}s`;
     wrap.innerHTML = `<span class="q-title" id="qt${qi}">${qi + 1}. ${item.q}</span>
-      ${item.ml ? `<span class="q-ml" lang="ml">${item.ml}</span>` : ''}
+      ${item.ml ? `<span class="q-ml" lang="ml">${item.ml}<button class="q-speak" type="button" aria-label="മലയാളത്തിൽ കേൾക്കാം">🔊</button></span>` : ''}
       ${item.note ? `<span class="q-note">${item.note}${item.noteMl ? `<span lang="ml">${item.noteMl}</span>` : ''}</span>` : ''}
       <div class="opts" role="group" aria-labelledby="qt${qi}">
         ${opts.map((o, oi) => `
           <label class="opt"><input type="checkbox" name="q${qi}" value="${oi}"><span class="dot"></span><span>${o.t}</span></label>`).join('')}
       </div>
       <div class="other-box"><textarea id="qx${qi}" aria-label="Your answer"></textarea></div>`;
+    const speakBtn = wrap.querySelector('.q-speak');
+    if (speakBtn) speakBtn.addEventListener('click', () => speakMl([item.ml, item.noteMl].filter(Boolean).join(' '), speakBtn));
     const box = wrap.querySelector('.other-box'), ta = wrap.querySelector('textarea');
     const inputs = Array.from(wrap.querySelectorAll('input'));
     const labels = Array.from(wrap.querySelectorAll('.opt'));
