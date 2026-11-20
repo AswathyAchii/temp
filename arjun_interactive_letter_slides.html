@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fff7f0">
+<title>A very important document for Arjun</title>
+<style>
+  :root{
+    --paper:#fffdf9; --ink:#423735; --muted:#8c7770; --pink:#f4c7cb;
+    --rose:#df929d; --peach:#f7dfce; --lav:#e8e0f5; --line:#eaded5; --mad:#d9534f;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); overflow-x:hidden;
+    background:
+      radial-gradient(circle at 12% 12%,#f8e7df 0 2px,transparent 3px),
+      radial-gradient(circle at 88% 25%,#eadff3 0 2px,transparent 3px),
+      #fff7f0;
+    background-size:38px 38px,52px 52px,auto;
+    font-family: ui-rounded,"Trebuchet MS",system-ui,sans-serif;
+  }
+  button{font:inherit;cursor:pointer}
+  .stk{width:1em;height:1em;object-fit:contain;vertical-align:-.15em;user-select:none;-webkit-user-drag:none;pointer-events:none}
+  .credit{display:block;margin-top:6px;font-size:.7rem;opacity:.8}
+  .credit a{color:inherit}
+
+  /* ---------- Cover ---------- */
+  .screen{min-height:100svh;display:grid;place-items:center;padding:28px 16px}
+  .intro{width:min(560px,100%);text-align:center;position:relative}
+  .eyebrow{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  h1{font-family:Georgia,serif;font-size:clamp(2.4rem,8vw,4.4rem);font-weight:500;line-height:1.04;margin:14px 0}
+  .subtitle{color:var(--muted);line-height:1.7;max-width:370px;margin:0 auto 26px}
+  .envelope-wrap{height:240px;display:grid;place-items:center;position:relative;margin:18px 0}
+  .envelope{width:260px;height:166px;position:relative;filter:drop-shadow(0 16px 18px #b98c7b30);animation:bob 3s ease-in-out infinite}
+  .envelope:hover{animation:grumble .5s ease-in-out infinite}
+  .env-back{position:absolute;inset:0;background:#e9aeb5;border-radius:12px}
+  .letter-peek{position:absolute;left:18px;right:18px;top:-32px;height:140px;background:#fffdf9;border:1px solid #f0e2d8;border-radius:7px;display:grid;place-items:center;color:#b47c82;font-family:Georgia,serif;font-style:italic;transition:transform .8s cubic-bezier(.2,.9,.3,1.2) .35s,opacity .4s 1s}
+  .flap{position:absolute;inset:0;background:#f2c5c5;clip-path:polygon(0 0,100% 0,50% 62%);transform-origin:top;transition:transform .6s;z-index:3}
+  .pocket{position:absolute;inset:0;background:#e7a4ad;clip-path:polygon(0 100%,0 0,50% 57%,100% 0,100% 100%);z-index:4;border-radius:0 0 12px 12px}
+  .seal{position:absolute;z-index:5;left:50%;top:48%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:#fff1e9;display:grid;place-items:center;font-size:21px;box-shadow:0 2px 8px #9d626244}
+  .envelope.open{animation:none}
+  .envelope.open .flap{transform:rotateX(180deg);z-index:1}
+  .envelope.open .seal{opacity:0;transform:translate(-50%,-50%) scale(1.8);transition:all .3s}
+  .envelope.open .letter-peek{transform:translateY(-95px) rotate(-3deg)}
+  .sticker{position:absolute;font-size:74px;animation:float 3.5s ease-in-out infinite;user-select:none}
+  .s1{left:4%;top:10%}.s2{right:5%;top:16%;animation-delay:.7s}.s3{left:12%;bottom:4%;animation-delay:1.2s}.s4{right:13%;bottom:0;animation-delay:.3s}
+  .s5{left:0;top:52%;animation-delay:1.6s}.s6{right:0;top:58%;animation-delay:.9s}
+  .primary{border:0;background:var(--ink);color:white;padding:15px 24px;border-radius:999px;box-shadow:0 7px 0 #cda8a0;transition:transform .2s,box-shadow .2s}
+  .primary:hover{transform:translateY(2px);box-shadow:0 5px 0 #cda8a0}
+  .tiny{font-size:.82rem;color:var(--muted);margin-top:18px}
+  .burst{position:fixed;pointer-events:none;font-size:60px;z-index:50;animation:burst 1.3s cubic-bezier(.15,.7,.3,1) forwards}
+
+  /* ---------- Letter ---------- */
+  #letter{display:none;padding:54px 16px 80px;position:relative}
+  #letter.visible{display:block;animation:appear .8s ease both}
+  .side-sticker{position:fixed;font-size:6.5rem;opacity:.85;pointer-events:none;animation:float 4s ease-in-out infinite;z-index:0}
+  .paper{width:min(760px,100%);margin:auto;background:var(--paper);padding:clamp(25px,6vw,58px);border:1px solid #f0e5dc;border-radius:8px;box-shadow:0 18px 55px #8b66521a;position:relative;z-index:1}
+  .paper:before{content:"";position:absolute;inset:10px;border:1px dashed #eadbd1;border-radius:5px;pointer-events:none}
+  .paper-head{text-align:center;position:relative;padding-bottom:22px;border-bottom:1px solid var(--line)}
+  .paper-head .stamp{font-size:4.5rem;line-height:1}
+  .paper-head h2{font:500 clamp(2rem,6vw,3.2rem)/1.1 Georgia,serif;margin:10px 0}
+  .paper-head p{color:var(--muted);font-size:.9rem;margin:0}
+
+  .read-bar{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:18px 0 0}
+  .read-bar button{border:1px solid #ddc9bf;background:#fff8f3;color:var(--ink);padding:9px 15px;border-radius:999px;font-size:.88rem;transition:background .2s}
+  .read-bar button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .read-bar[hidden],.read-bar button[hidden]{display:none}
+
+  .message{position:relative;padding:12px 0}
+  .page{display:none;position:relative;font:clamp(1.05rem,3.2vw,1.22rem)/1.9 Georgia,serif;padding:18px 4px 10px;min-height:260px}
+  .page.active{display:block}
+  .page.from-right{animation:inRight .5s cubic-bezier(.2,.8,.3,1) both}
+  .page.from-left{animation:inLeft .5s cubic-bezier(.2,.8,.3,1) both}
+  .page p{margin:0 0 1.1em;padding:4px 8px;border-radius:8px;transition:background .4s}
+  .page.active p{animation:rise .55s ease both;animation-delay:calc(var(--i,0) * 140ms + 120ms)}
+  .page p.speaking{background:#fbe6e3}
+  .page .em{background:linear-gradient(transparent 60%,#f9e4dc 60%);padding:0 2px}
+  .page-sticker{float:right;margin:0 0 8px 12px;font-size:5.5rem;line-height:1;transform:rotate(14deg);animation:pop .6s cubic-bezier(.3,1.6,.5,1) .35s both;pointer-events:none}
+
+  .signoff{text-align:center;padding-top:22px;margin-top:10px;border-top:1px solid var(--line);position:relative}
+  .signoff .big{font:italic 1.8rem Georgia,serif;color:#b87982}
+  .signoff p{margin:8px 0;color:var(--muted);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;font-size:.95rem}
+  .mad-stamp{display:inline-block;margin:16px 0 4px;padding:8px 18px;border:3px solid var(--mad);color:var(--mad);border-radius:8px;font:800 1.15rem/1 ui-rounded,"Trebuchet MS",sans-serif;letter-spacing:.12em;text-transform:uppercase;transform:rotate(-10deg);opacity:0}
+  .page.active .mad-stamp{animation:slam .45s cubic-bezier(.3,1.4,.5,1) 1.2s both}
+  .end-stickers{font-size:4.5rem;display:flex;justify-content:center;gap:.35em;margin-top:14px}
+  .end-stickers span{display:inline-block;animation:wiggle 1.2s ease-in-out infinite}
+  .end-stickers span:nth-child(2){animation-delay:.2s}.end-stickers span:nth-child(3){animation-delay:.4s}.end-stickers span:nth-child(4){animation-delay:.6s}
+
+  .page-controls{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 8px;border-top:1px solid var(--line)}
+  .page-controls button,.quiz-actions button{border:1px solid #ddc9bf;background:#fff8f3;color:var(--ink);padding:11px 16px;border-radius:999px;transition:transform .15s}
+  .page-controls button:active,.quiz-actions button:active{transform:scale(.95)}
+  .page-controls button:disabled{opacity:.35;cursor:not-allowed}
+  .page-controls #nextPage.to-questions{background:var(--ink);color:#fff;border-color:var(--ink);animation:nudge 1.6s ease-in-out infinite}
+  .page-count{font-size:.82rem;color:var(--muted);white-space:nowrap}
+  .progress-track{height:5px;background:#f1e7e0;border-radius:99px;overflow:hidden;margin:4px 0 18px}
+  .progress-fill{height:100%;width:0;background:#d9959f;border-radius:99px;transition:width .35s}
+  .swipe-hint{text-align:center;font-size:.78rem;color:#a48d83;margin:5px 0 0}
+
+  /* ---------- Questions ---------- */
+  .questionnaire{display:none;position:relative;padding-top:22px}
+  .questionnaire.show{display:block;animation:appear .6s ease both}
+  .questionnaire h3{font:500 clamp(1.8rem,5vw,2.5rem) Georgia,serif;text-align:center;margin:0 0 8px}
+  .questionnaire .intro-copy{text-align:center;color:var(--muted);line-height:1.65;margin:0 auto 24px;max-width:500px}
+  .question{margin:20px 0;animation:rise .5s ease both}
+  .question .q-title{display:block;font-weight:700;line-height:1.5;margin-bottom:4px}
+  .question .q-ml{display:block;color:var(--muted);line-height:1.6;font-size:.95rem;margin-bottom:10px}
+  .question .q-note{display:block;background:#fff4ec;border-left:3px solid #e8b9a5;border-radius:6px;padding:8px 12px;margin:0 0 10px;font-size:.88rem;line-height:1.55;color:#7a625b}
+  .question .q-note span{display:block;margin-top:3px}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opt{display:flex;align-items:center;gap:10px;border:1px solid #e7d8ce;border-radius:12px;background:#fffdfa;padding:11px 14px;cursor:pointer;line-height:1.45;transition:border-color .2s,background .2s,transform .15s}
+  .opt:hover{border-color:#d9959f}
+  .opt:active{transform:scale(.98)}
+  .opt input{position:absolute;opacity:0;pointer-events:none}
+  .opt .dot{flex:none;width:18px;height:18px;border-radius:6px;border:2px solid #d8c3b8;transition:all .2s}
+  .opt:has(input:checked){border-color:#d9959f;background:#fdeeed}
+  .opt:has(input:checked) .dot{border-color:#d9959f;background:radial-gradient(circle,#d9959f 0 45%,transparent 50%)}
+  .opt:has(input:focus-visible){box-shadow:0 0 0 3px #f4c7cb88}
+  .opt:has(input:disabled){cursor:default}
+  .opt:has(input:disabled):hover{border-color:#e7d8ce}
+  .opts .opt.right{border-color:#4caf50;background:#e7f6e8}
+  .opts .opt.right .dot{border-color:#4caf50;background:none}
+  .opts .opt.right:has(input:checked) .dot{background:radial-gradient(circle,#4caf50 0 45%,transparent 50%)}
+  .opts .opt.wrong{border-color:#e05656;background:#fde6e6;animation:shake .45s ease}
+  .opts .opt.wrong .dot{border-color:#e05656;background:radial-gradient(circle,#e05656 0 45%,transparent 50%)}
+  .opt.right::after,.opt.wrong::after{margin-left:auto;font-weight:700;font-size:.85rem;white-space:nowrap}
+  .opt.right::after{content:"✓ Right";color:#2e7d32}
+  .opt.wrong::after{content:"✗ Wrong";color:#c62828}
+
+  .callout{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:16px;background:#42373599;animation:appear .25s ease both}
+  .callout[hidden]{display:none}
+  .callout-card{width:min(400px,100%);background:var(--paper);border:3px solid #e05656;border-radius:20px;padding:22px 22px 20px;text-align:center;box-shadow:0 20px 50px #0004;animation:pop-in .5s cubic-bezier(.3,1.5,.5,1) both}
+  .callout-stk{display:block;font-size:7rem;line-height:1;margin:-70px auto 6px;animation:wiggle .9s ease-in-out infinite}
+  .callout-card p{font:700 clamp(1.1rem,4.5vw,1.3rem)/1.55 Georgia,serif;color:#b23b3b;margin:0 0 16px}
+  .callout-card button{border:0;background:var(--ink);color:#fff;padding:12px 22px;border-radius:999px}
+  @keyframes pop-in{from{opacity:0;transform:scale(.4) rotate(-6deg)}to{opacity:1;transform:none}}
+  .pop-layer{position:fixed;inset:0;z-index:100;pointer-events:none;display:none}
+  .pop-layer.on{display:block}
+  .pop-flash{position:absolute;inset:0;background:#ff3b3b;opacity:0}
+  .pop-card{position:absolute;left:50%;top:50%;width:min(72vw,360px);transform:translate(-50%,-50%) scale(0);text-align:center}
+  .pop-stk{width:100%;height:auto;display:block;border-radius:22px;filter:drop-shadow(0 12px 24px #0003)}
+  .pop-word{font:900 clamp(2.4rem,11vw,4.2rem)/1 ui-rounded,"Trebuchet MS",sans-serif;color:#e53935;-webkit-text-stroke:2px #fff;text-shadow:0 4px 0 #0002;opacity:0;margin-top:4px}
+  .pop-layer.good .pop-word{color:#43a047;font-size:clamp(2rem,9vw,3.4rem)}
+  .other-box{display:none;margin-top:8px}
+  .other-box.show{display:block;animation:rise .35s ease both}
+  .question textarea{width:100%;min-height:80px;resize:vertical;border:1px solid #e7d8ce;border-radius:10px;background:#fffdfa;padding:12px;color:var(--ink);font:1rem/1.6 Georgia,serif;outline:none}
+  .question textarea:focus{border-color:#d9959f;box-shadow:0 0 0 3px #f4c7cb55}
+  .quiz-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:24px}
+  .quiz-actions .send{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .quiz-actions .wa{background:#25d366;color:#fff;border-color:#25d366}
+  .quiz-note{text-align:center;color:var(--muted);font-size:.8rem;line-height:1.6;margin:14px auto 0;max-width:480px}
+  .copy-status{text-align:center;min-height:22px;color:#8b6269;font-size:.86rem;margin-top:10px}
+  .backtop{display:block;margin:28px auto 0;border:1px solid #ddc9bf;background:transparent;color:var(--ink);padding:10px 17px;border-radius:999px}
+  .footer{text-align:center;color:#a48d83;font-size:.78rem;margin-top:28px}
+
+  @media(max-width:480px){
+    .page{min-height:320px;padding:14px 0 8px}
+    .page-controls button{padding:10px 13px}
+    .envelope{transform:scale(.9)}
+    .paper{padding:25px 20px}
+    .page-sticker{font-size:4.2rem}
+    .sticker{font-size:58px}
+    .end-stickers{font-size:3.6rem}
+  }
+  @media(max-width:1000px){.side-sticker{display:none}}
+
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1deg)}}
+  @keyframes grumble{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-12px) rotate(8deg)}}
+  @keyframes appear{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes inRight{from{opacity:0;transform:translateX(60px) rotate(2deg)}to{opacity:1;transform:none}}
+  @keyframes inLeft{from{opacity:0;transform:translateX(-60px) rotate(-2deg)}to{opacity:1;transform:none}}
+  @keyframes pop{0%{opacity:0;transform:scale(0) rotate(-40deg)}70%{opacity:1;transform:scale(1.3) rotate(20deg)}100%{opacity:1;transform:scale(1) rotate(14deg)}}
+  @keyframes slam{0%{opacity:0;transform:scale(3) rotate(-25deg)}100%{opacity:.9;transform:scale(1) rotate(-10deg)}}
+  @keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg) scale(1.1)}75%{transform:rotate(14deg)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+  @keyframes burst{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.2) rotate(var(--r))}}
+  @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}.mad-stamp{opacity:.9}}
+</style>
+</head>
+<body>
+<main>
+  <section class="screen" id="cover">
+    <div class="intro">
+      <span class="eyebrow">A personal delivery · just for Arjun</span>
+      <h1>Arjun, you have<br>some reading to do.</h1>
+      <p class="subtitle">Grab some water and sit somewhere comfortable. 🙂</p>
+      <div class="envelope-wrap" aria-label="A pink animated envelope">
+        <span class="sticker s1" data-stk="WJaeeOEt41YfmUzZOq">😤</span><span class="sticker s2" data-stk="kcYy30CFseKqdIo7nj">💌</span>
+        <span class="sticker s3" data-stk="LfTu28H05pKCbyCMkt">😠</span><span class="sticker s4" data-stk="TEoTXwdZw03OIKRpk6">😤</span>
+        <span class="sticker s5" data-stk="uNTwRWSjpcufMeLnmq">😠</span><span class="sticker s6" data-stk="csXXADlLOZ9EPy9LQK">😤</span>
+        <div class="envelope" id="envelope">
+          <div class="env-back"></div>
+          <div class="letter-peek">A little something<br>you need to read</div>
+          <div class="flap"></div><div class="pocket"></div><div class="seal">♥</div>
+        </div>
+      </div>
+      <button class="primary" id="openBtn">Break the seal 💌</button>
+      <p class="tiny">Warning: this document contains feelings, logic and sarcasm.</p>
+    </div>
+  </section>
+
+  <section id="letter">
+    <span class="side-sticker" data-stk="uNTwRWSjpcufMeLnmq" style="left:4%;top:18%">😤</span>
+    <span class="side-sticker" data-stk="Rf5kNg0wwny6txUEjr" style="right:4%;top:26%;animation-delay:1s">😤</span>
+    <span class="side-sticker" data-stk="YqKCbAvAm834T0Svkf" style="left:6%;top:62%;animation-delay:.5s">😤</span>
+    <span class="side-sticker" data-stk="b28IVGlaDTclArIqNC" style="right:5%;top:70%;animation-delay:1.5s">😤</span>
+
+    <article class="paper">
+      <header class="paper-head">
+        <div class="stamp" data-stk="cJHAJn3dPZlpTFjDV0">✉️</div>
+        <h2>A small essay<br>about a few things.</h2>
+        <p>Written with feelings. Sent with a little attitude.</p>
+      </header>
+
+      <div class="read-bar" id="readBar" hidden>
+        <button id="readBtn" type="button" lang="ml">🔊 കണ്ണ് വേദനിക്കുന്നുണ്ടേൽ ഈ സ്പീക്കർ ഉപയോഗിക്ക്</button>
+        <button id="stopBtn" type="button" hidden>⏹ Stop</button>
+      </div>
+
+      <div class="message" id="message">
+        <div class="page" data-sticker="TEoTXwdZw03OIKRpk6">
+          <p>Arjune, I don't know whether you're ready to read the essay I am about to write.</p>
+          <p>You always consider sorry is a word to say when we did something wrong and we are apologizing. But it's not always like that. We use the word "sorry" to acknowledge the fact "ohh that person is in hurt and I see your pain."</p>
+          <p>You should know when someone says they got hurt we have to say sorry. It's pointless to say how and why it happened if you're not saying sorry.</p>
+        </div>
+
+        <div class="page" data-sticker="YqKCbAvAm834T0Svkf">
+          <p>You know why our conversations always got lengthy when I am sad, the worst part, I have to explain or give a speech both emotionally and logically for hours for you to finally understand that <span class="em">"she got hurt and I have to say sorry"</span></p>
+          <p>I know you will never intentionally hurt me. But you are a human, you may make mistakes unknowingly and me expressing them doesn't make you a bad person or a villain.</p>
+        </div>
+
+        <div class="page" data-sticker="dkmLxCmlLrSzp6BxSZ">
+          <p>We can argue about how I am not eating well or how I am not quitting my job and how terribly I am not keeping up with the budget, whether we should watch a movie or not, whether we want kids or sex or toys and whether Shiva is really praying to Rama.</p>
+          <p>There are plenty of things which we can argue about but me getting hurt or you getting hurt is not something to argue about.</p>
+        </div>
+
+        <div class="page" data-sticker="Rf5kNg0wwny6txUEjr">
+          <p>Today it's going to be 82 days that we started this journey and every time I am the only one who comes up FIRST saying that you hurt me. Why are you not saying I hurt your feelings? I am also human, I might have also hurt you unknowingly but I don't remember you coming to me and saying that I hurt your feelings.</p>
+          <p>The only time you share that your feelings are getting hurt is when I bring up that you hurt me.</p>
+        </div>
+
+        <div class="page" data-sticker="csXXADlLOZ9EPy9LQK">
+          <p>And what happened today, you could have told me that the room is very silent and you won't be able to talk to me. Because not every day is like this Arjun, there are times when you had conversations with me in that room when everyone was busy. So if the room is too quiet, tell me beforehand.</p>
+          <p>And yeah I could have stopped the conversation without pushing you to talk as you were sick. But you treated me badly without acknowledging that I am in hurt. Which kept me in my selfish mode to protect me. Sorry if I hurt you 🥲. But I am not sorry for telling you that you hurt me 🙂</p>
+        </div>
+
+        <div class="page" data-sticker="LfTu28H05pKCbyCMkt">
+          <p>And I want you to understand our conversations about me coming and saying your joke or your actions or the dog which is walking in the street hurt me, won't stop and will continue for hours if you fail to acknowledge that I am in hurt. And when the conversation is always about my feelings being hurt, I am the highlight. What about your feelings? Which is not in my hands, you have to talk, right?</p>
+          <p>I will get over these emotions by writing this essay and telling you, but what about you Arjun? I want to know how my partner is feeling and how you process your emotions. Avoiding your hurts is not a solution.</p>
+        </div>
+
+        <div class="page" data-sticker="uNTwRWSjpcufMeLnmq">
+          <p>I am not asking you to be the Aswathy and always instantly and openly say things. But please say your small discomforts and come and tell me you're hurt. If you can't do that, what's the point of you having me? I am your partner, not a person who is there only to have fun.</p>
+          <p>And don't mix this with the gender thing. Forget about this gender bullshit, let's be humans da, every emotion of yours matters too.</p>
+        </div>
+
+        <div class="page" data-sticker="b28IVGlaDTclArIqNC">
+          <p>If I am the only one who always brings up what hurt me, this relationship will end up being all about Aswathy. But as a human being I can't ignore my emotions getting hurt just to protect this relationship. The only solution I have is, you also come and say "you hurt me" 🥲</p>
+          <p>But if you're saying I hurt you only after me bringing up what hurts me, that is stupidity and won't count. I will treat it as your defense mechanism 😏.</p>
+        </div>
+
+        <div class="page" data-sticker="WJaeeOEt41YfmUzZOq">
+          <p>And consider making you read this essay as my punishment for you 🤌</p>
+          <p>Just a reminder, I am still mad at you 😏🙂</p>
+          <p>I still want to write and talk about this in 10000 other ways until I know you understood what's happening between us. Just know, you hurting me unknowingly is something you can't control, but acknowledging that is something in your hands.</p>
+          <footer class="signoff">
+            <div class="big">The End. For now.</div>
+            <p>Congratulations, you made it to the last page.</p>
+            <div class="mad-stamp">Delivered 💢</div>
+            <div class="end-stickers"><span data-stk="Q8ICUbSd4XGmUlG6t8">😤</span><span data-stk="TEoTXwdZw03OIKRpk6">😏</span><span data-stk="LfTu28H05pKCbyCMkt">😠</span></div>
+          </footer>
+        </div>
+      </div>
+
+      <div class="page-controls" id="pageControls" aria-label="Letter navigation">
+        <button id="prevPage" disabled>← Previous</button>
+        <span class="page-count" id="pageCount">Page 1 of 1</span>
+        <button id="nextPage">Next →</button>
+      </div>
+      <div class="progress-track" id="progressTrack" aria-label="Reading progress"><div class="progress-fill" id="progressFill"></div></div>
+      <p class="swipe-hint" id="swipeHint">Swipe left or right, or use your arrow keys, to turn the page ✨</p>
+
+      <section class="questionnaire" id="questionnaire">
+        <h3>Before you read… 📝</h3>
+        <div id="quiz"></div>
+        <div class="quiz-actions">
+          <button class="send" id="toLetter" type="button">Now read my letter 💌</button>
+        </div>
+        <p class="copy-status" id="quizStatus" aria-live="polite"></p>
+      </section>
+
+      <section class="questionnaire" id="sendPanel">
+        <h3>One last thing… 💌</h3>
+        <p class="intro-copy">Answer this one, then send me all your answers.</p>
+        <div id="finalQ"></div>
+        <div class="quiz-actions">
+          <button class="wa" id="waAnswers" type="button">Send on WhatsApp 💬</button>
+          <button class="send" id="copyAnswers" type="button">Copy my answers ♡</button>
+          <button id="backToLetter" type="button">← Back to the letter</button>
+        </div>
+        <p class="copy-status" id="copyStatus" aria-live="polite"></p>
+      </section>
+    </article>
+    <button class="backtop" id="backBtn">Back to the beginning ↑</button>
+    <div class="footer">Made with feelings, not as a substitute for a conversation. ♡<span class="credit">Stickers via <a href="https://giphy.com" target="_blank" rel="noopener">GIPHY</a></span></div>
+  </section>
+</main>
+<div class="callout" id="callout" role="dialog" aria-modal="true" aria-labelledby="calloutText" hidden>
+  <div class="callout-card">
+    <span class="callout-stk" id="calloutStk"></span>
+    <p id="calloutText"></p>
+    <button id="calloutOk" type="button">Okay… 🥲</button>
+  </div>
+</div>
+<div class="pop-layer" id="popLayer" aria-hidden="true">
+  <div class="pop-flash"></div>
+  <div class="pop-card"><img class="pop-stk" alt=""><div class="pop-word"></div></div>
+</div>
+<script>
+  const $ = id => document.getElementById(id);
+  const openBtn = $('openBtn'), envelope = $('envelope'), letter = $('letter');
+  const pages = Array.from(document.querySelectorAll('.page'));
+  const prevBtn = $('prevPage'), nextBtn = $('nextPage'), pageCount = $('pageCount');
+  const progressFill = $('progressFill'), questionnaire = $('questionnaire'), sendPanel = $('sendPanel');
+  let mode = 'quiz'; // quiz → letter → send
+  const SHOW_SEND = false; // set to true to bring back the last question + WhatsApp screen
+  const paper = document.querySelector('.paper');
+  const navEls = [$('pageControls'), $('progressTrack'), $('swipeHint'), $('message')];
+  const last = pages.length - 1;
+  let currentPage = 0;
+
+  // ---------- Animated stickers (GIPHY), with emoji fallback if offline ----------
+  function stkImg(id, fallback) {
+    const img = new Image();
+    img.className = 'stk'; img.alt = fallback || ''; img.draggable = false; img.decoding = 'async';
+    img.src = `https://media.giphy.com/media/${id}/200.webp`;
+    img.onerror = () => {
+      if (!img.dataset.retried) { img.dataset.retried = '1'; img.src = `https://media.giphy.com/media/${id}/200.gif`; }
+      else img.replaceWith(document.createTextNode(fallback || ''));
+    };
+    return img;
+  }
+  document.querySelectorAll('[data-stk]').forEach(el => {
+    const fallback = el.textContent.trim();
+    el.textContent = '';
+    el.appendChild(stkImg(el.dataset.stk, fallback));
+  });
+
+  // Stagger index for paragraph entrance animation + page sticker.
+  pages.forEach(page => {
+    page.querySelectorAll('p').forEach((p, i) => p.style.setProperty('--i', i));
+    const s = document.createElement('span');
+    s.className = 'page-sticker';
+    s.appendChild(stkImg(page.dataset.sticker, '😤'));
+    page.prepend(s);
+  });
+
+  function setMode(m) {
+    mode = m;
+    const onLetter = m === 'letter';
+    navEls.forEach(el => el.style.display = onLetter ? '' : 'none');
+    $('readBar').style.display = onLetter ? '' : 'none';
+    // Essay title only on the first page of the letter.
+    document.querySelector('.paper-head').style.display = onLetter && currentPage === 0 ? '' : 'none';
+    questionnaire.classList.toggle('show', m === 'quiz');
+    sendPanel.classList.toggle('show', m === 'send');
+  }
+
+  function showPage(index, dir) {
+    currentPage = Math.max(0, Math.min(index, last));
+    pages.forEach((p, i) => {
+      p.classList.remove('active', 'from-right', 'from-left');
+      if (i === currentPage) {
+        void p.offsetWidth; // restart animations
+        p.classList.add('active');
+        if (dir) p.classList.add(dir > 0 ? 'from-right' : 'from-left');
+      }
+    });
+    pageCount.textContent = `Page ${currentPage + 1} of ${pages.length}`;
+    progressFill.style.width = `${((currentPage + 1) / pages.length) * 100}%`;
+    prevBtn.disabled = currentPage === 0;
+    const isLast = currentPage === last;
+    nextBtn.textContent = isLast ? 'Send my answers ♡' : 'Next →';
+    nextBtn.classList.toggle('to-questions', isLast);
+    // For now the letter stops on its last page (no final question / send screen).
+    nextBtn.style.visibility = isLast && !SHOW_SEND ? 'hidden' : '';
+    setMode('letter');
+    if (dir && paper.getBoundingClientRect().top < 0) paper.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function goTo(index, dir) {
+    stopReading();
+    showPage(index, dir);
+  }
+
+  function next() {
+    if (currentPage < last) goTo(currentPage + 1, 1);
+    else if (SHOW_SEND) showSend();
+  }
+  function prev() { if (currentPage > 0) goTo(currentPage - 1, -1); }
+
+  function showSend() {
+    stopReading();
+    setMode('send');
+    sendPanel.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  $('backToLetter').addEventListener('click', () => goTo(last, -1));
+
+  document.addEventListener('keydown', e => {
+    if (!letter.classList.contains('visible') || mode !== 'letter') return;
+    if (e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowLeft') prev();
+  });
+
+  // ---------- Envelope opening with an emoji burst ----------
+  function burst(x, y) {
+    const ids = ['WJaeeOEt41YfmUzZOq','LfTu28H05pKCbyCMkt','uNTwRWSjpcufMeLnmq','kcYy30CFseKqdIo7nj','dkmLxCmlLrSzp6BxSZ','TEoTXwdZw03OIKRpk6'];
+    for (let i = 0; i < 12; i++) {
+      const s = document.createElement('span');
+      s.className = 'burst';
+      s.appendChild(stkImg(ids[i % ids.length], '😤'));
+      const angle = Math.random() * Math.PI * 2, dist = 120 + Math.random() * 160;
+      s.style.left = x + 'px'; s.style.top = y + 'px';
+      s.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+      s.style.setProperty('--dy', Math.sin(angle) * dist - 60 + 'px');
+      s.style.setProperty('--r', (Math.random() * 360 - 180) + 'deg');
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 1400);
+    }
+  }
+
+  openBtn.addEventListener('click', () => {
+    envelope.classList.add('open');
+    openBtn.textContent = 'Opening…';
+    openBtn.disabled = true;
+    const r = envelope.getBoundingClientRect();
+    setTimeout(() => burst(r.left + r.width / 2, r.top + r.height / 3), 450);
+    setTimeout(() => {
+      $('cover').style.display = 'none';
+      letter.classList.add('visible');
+      showPage(0);
+      setMode('quiz');
+      window.scrollTo({top:0, behavior:'smooth'});
+      openBtn.disabled = false;
+    }, 1500);
+  });
+
+  $('backBtn').addEventListener('click', () => {
+    stopReading();
+    letter.classList.remove('visible');
+    $('cover').style.display = 'grid';
+    envelope.classList.remove('open');
+    openBtn.textContent = 'Break the seal 💌';
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // ---------- Swipe ----------
+  let touchStartX = 0, touchStartY = 0;
+  paper.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+  }, {passive:true});
+  paper.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.25 && mode === 'letter') {
+      dx < 0 ? next() : prev();
+    }
+  }, {passive:true});
+
+  // ---------- Read aloud (browser text-to-speech) ----------
+  const synth = window.speechSynthesis;
+  const readBtn = $('readBtn'), stopBtn = $('stopBtn');
+  let voice = null, reading = false, paused = false, session = 0;
+
+  function pickVoice() {
+    const voices = synth.getVoices();
+    const prefer = ['Veena','Rishi','Google UK English Female','Samantha','Karen','Moira','Google US English','Microsoft Aria','Microsoft Jenny'];
+    for (const name of prefer) {
+      const v = voices.find(v => v.name.includes(name));
+      if (v) return v;
+    }
+    return voices.find(v => v.lang === 'en-IN') || voices.find(v => v.lang && v.lang.startsWith('en')) || null;
+  }
+
+  const spoken = el => el.textContent
+    .replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{1F3FB}-\u{1F3FF}♡♥]/gu, '')
+    .replace(/\bda\b/g, 'daa')
+    .replace(/\s+/g, ' ').trim();
+
+  function clearSpeaking() { document.querySelectorAll('.speaking').forEach(p => p.classList.remove('speaking')); }
+
+  function updateReadUI() {
+    readBtn.classList.toggle('on', reading);
+    readBtn.textContent = !reading ? '🔊 കണ്ണ് വേദനിക്കുന്നുണ്ടേൽ ഈ സ്പീക്കർ ഉപയോഗിക്ക്' : paused ? '▶️ Resume' : '⏸ Pause';
+    stopBtn.hidden = !reading;
+  }
+
+  function speakPage(pageIdx, paraIdx, id) {
+    if (id !== session) return;
+    const paras = Array.from(pages[pageIdx].querySelectorAll(':scope > p'));
+    if (paraIdx >= paras.length) {
+      if (pageIdx < last) {
+        showPage(pageIdx + 1, 1);
+        setTimeout(() => speakPage(pageIdx + 1, 0, id), 900);
+      } else {
+        stopReading();
+      }
+      return;
+    }
+    clearSpeaking();
+    const p = paras[paraIdx];
+    p.classList.add('speaking');
+    const u = new SpeechSynthesisUtterance(spoken(p));
+    if (voice) { u.voice = voice; u.lang = voice.lang; }
+    u.rate = 0.95; u.pitch = 1.05;
+    u.onend = () => setTimeout(() => speakPage(pageIdx, paraIdx + 1, id), 350);
+    u.onerror = () => { if (id === session) stopReading(); };
+    synth.speak(u);
+  }
+
+  function startReading() {
+    voice = voice || pickVoice();
+    synth.cancel();
+    reading = true; paused = false;
+    const id = ++session;
+    updateReadUI();
+    speakPage(currentPage, 0, id);
+  }
+
+  function stopReading() {
+    if (!synth) return;
+    session++;
+    reading = false; paused = false;
+    synth.cancel();
+    clearSpeaking();
+    updateReadUI();
+  }
+
+  if (synth && 'SpeechSynthesisUtterance' in window) {
+    $('readBar').hidden = false;
+    voice = pickVoice();
+    synth.onvoiceschanged = () => { voice = pickVoice(); };
+    readBtn.addEventListener('click', () => {
+      if (!reading) startReading();
+      else if (paused) { synth.resume(); paused = false; updateReadUI(); }
+      else { synth.pause(); paused = true; updateReadUI(); }
+    });
+    stopBtn.addEventListener('click', stopReading);
+  }
+
+  // ---------- Questions (options + "Other" with a text box) ----------
+  // An option with `write` also opens the text box (placeholder = its value).
+  // `right` = index of the correct option (wrong pick → slap). `praise` = no grading, "Good boy" on answer.
+  const QUESTIONS = [
+    {
+      q: 'What\'s your first instinct when I say "you made me feel bad" and I\'m crying?',
+      ml: 'ഞാൻ കരഞ്ഞുകൊണ്ട് "നീ എന്നെ വിഷമിപ്പിച്ചു" എന്ന് പറയുമ്പോൾ നിന്റെ ആദ്യത്തെ പ്രതികരണം എന്താണ്?',
+      right: 1,
+      slapAll: true,
+      // First answer here gets slapped, then this pop-up.
+      callout: { on: 'any', stk: 'csXXADlLOZ9EPy9LQK', text: 'No, you\'re not doing it. I have to explain for hours for you to understand that I am hurt.' },
+      opts: [
+        { t: 'Explain how and why it happened' },
+        { t: 'Say sorry, I see you\'re hurt' },
+        { t: 'Go quiet until you calm down' },
+      ]
+    },
+    {
+      q: 'When was the last time you told me "you made me feel bad", without me coming first to talk about something you made me feel bad about?',
+      ml: 'ഞാൻ ആദ്യം വന്ന് നീ എന്നെ വിഷമിപ്പിച്ച കാര്യം പറയാതെ, "നീ എന്നെ വിഷമിപ്പിച്ചു" എന്ന് നീ എന്നോട് അവസാനമായി പറഞ്ഞത് എപ്പോഴാണ്?',
+      // He never did it, so the honest answers are right. Every answer gets slapped though.
+      right: [1, 2],
+      slapAll: true,
+      callout: [
+        { on: [0], stk: 'WJaeeOEt41YfmUzZOq', text: 'You never did. 😤' },
+        { on: [1, 2], stk: 'csXXADlLOZ9EPy9LQK', text: 'But whyyyyyy, aren\'t you a human? 😤' },
+      ],
+      opts: [
+        { t: 'Recently, I told you on my own' },
+        { t: 'I don\'t remember ever doing that' },
+        { t: 'Only after you came to me first' },
+      ]
+    },
+    {
+      q: 'When the room is quiet and you can\'t talk, what do you do?',
+      ml: 'റൂം നിശബ്ദമായിരിക്കുകയും നിനക്ക് സംസാരിക്കാൻ പറ്റാതിരിക്കുകയും ചെയ്യുമ്പോൾ നീ എന്ത് ചെയ്യും?',
+      note: 'Remember, it\'s not quiet every day. Most days you talk to me freely in that room.',
+      noteMl: 'ഓർക്കണം, എല്ലാ ദിവസവും റൂം അങ്ങനെ നിശബ്ദമല്ല. മിക്ക ദിവസവും നീ ആ റൂമിൽ ഇരുന്ന് എന്നോട് ഫ്രീ ആയി സംസാരിക്കാറുണ്ട്.',
+      right: 1,
+      // Even the right answer gets slapped here, then this pop-up.
+      callout: { on: [1], stk: 'csXXADlLOZ9EPy9LQK', text: 'Ennittu nee athu cheytho? Illaaa…. 😤' },
+      opts: [
+        { t: 'Act normal and hope you don\'t notice' },
+        { t: 'Tell you beforehand: "The room is quiet today, I can\'t talk right now"' },
+        { t: 'Go quiet or reply cold, and explain later' },
+      ]
+    },
+    {
+      q: 'Is there something that hurt you that you never told me?',
+      ml: 'നിന്നെ വിഷമിപ്പിച്ച, എന്നോട് ഇതുവരെ പറയാത്ത എന്തെങ്കിലും കാര്യം ഉണ്ടോ?',
+      praise: true,
+      final: true, // shown after the letter, next to the send buttons
+      // "No, nothing right now" → slap + pop-up instead of "Good boy".
+      callout: { on: [1], stk: 'csXXADlLOZ9EPy9LQK', text: 'Athentha, ninakku vikaram ille? Atho njan ithuvare ninne vishamippichille? Athentha, njan manushyan alle? 😤' },
+      opts: [
+        { t: 'Yes, and I\'m telling you now', write: 'Tell me, I\'m listening…' },
+        { t: 'No, nothing right now' },
+        { t: 'Yes, but I\'d rather tell you in person' },
+      ]
+    }
+  ];
+
+  // `right` can be one index or a list of indexes.
+  const isGraded = item => item.right !== undefined;
+  const isRight = (item, idx) => [].concat(item.right).includes(idx);
+
+  const quiz = $('quiz');
+  QUESTIONS.forEach((item, qi) => {
+    const opts = item.opts;
+    const wrap = document.createElement('div');
+    wrap.className = 'question';
+    wrap.style.animationDelay = `${0.1 + qi * 0.1}s`;
+    wrap.innerHTML = `<span class="q-title" id="qt${qi}">${qi + 1}. ${item.q}</span>
+      ${item.ml ? `<span class="q-ml" lang="ml">${item.ml}</span>` : ''}
+      ${item.note ? `<span class="q-note">${item.note}${item.noteMl ? `<span lang="ml">${item.noteMl}</span>` : ''}</span>` : ''}
+      <div class="opts" role="group" aria-labelledby="qt${qi}">
+        ${opts.map((o, oi) => `
+          <label class="opt"><input type="checkbox" name="q${qi}" value="${oi}"><span class="dot"></span><span>${o.t}</span></label>`).join('')}
+      </div>
+      <div class="other-box"><textarea id="qx${qi}" aria-label="Your answer"></textarea></div>`;
+    const box = wrap.querySelector('.other-box'), ta = wrap.querySelector('textarea');
+    const inputs = Array.from(wrap.querySelectorAll('input'));
+    const labels = Array.from(wrap.querySelectorAll('.opt'));
+    inputs.forEach(input => input.addEventListener('change', () => {
+      const idx = +input.value, o = opts[idx];
+      // Text box shows while any ticked option asks for writing.
+      const writer = inputs.filter(i => i.checked).map(i => opts[+i.value]).find(x => x.write);
+      box.classList.toggle('show', !!writer);
+      if (writer) ta.placeholder = writer.write;
+      if (!input.checked) return;
+      if (o.write) ta.focus({preventScroll:true});
+
+      const graded = isGraded(item) && !o.other;
+      const right = isRight(item, idx);
+      if (graded) {
+        // A graded tick is final: green if right, red if wrong.
+        input.disabled = true;
+        labels[idx].classList.add(right ? 'right' : 'wrong');
+      }
+      // Each pop-up shows once, the first time a matching option is ticked.
+      const c = [].concat(item.callout || []).find(c => !c.shown && (c.on === 'any' || c.on.includes(idx)));
+      if (c) {
+        c.shown = true;
+        slap(labels[idx]);
+        setTimeout(() => showCallout(c), reduceMotion ? 3100 : 3300);
+      } else if (graded && (!right || item.slapAll)) {
+        slap(labels[idx]);
+      }
+      const calloutOption = [].concat(item.callout || []).some(c => c.on !== 'any' && c.on.includes(idx));
+      if (item.praise && !item.praised && !calloutOption) { item.praised = true; goodBoy(labels[idx]); }
+    }));
+    item.all = opts;
+    item.el = wrap;
+    (item.final ? $('finalQ') : quiz).appendChild(wrap);
+  });
+
+  // ---------- Answers ----------
+  function answersText() {
+    const answers = QUESTIONS.map((item, qi) => {
+      const picked = Array.from(document.querySelectorAll(`input[name="q${qi}"]:checked`)).map(i => +i.value);
+      const typed = $(`qx${qi}`).value.trim();
+      const lines = picked.map(v => {
+        const o = item.all[v];
+        if (o.other) return `Other: ${typed || '(wrote nothing)'}`;
+        let a = o.t;
+        if (isGraded(item)) a += isRight(item, v) ? '  ✅' : '  ❌ (got slapped)';
+        return a;
+      });
+      if (typed && !picked.some(v => item.all[v].other)) lines.push(typed);
+      const a = lines.length ? lines.map(l => `→ ${l}`).join('\n') : '→ (No answer)';
+      return `${qi + 1}. ${item.q}\n${a}`;
+    }).join('\n\n');
+    return `My answers to your letter 💌\n\n${answers}`;
+  }
+
+  function finalAnswered() {
+    if (firstMissing(true) === -1) return true;
+    $('copyStatus').textContent = 'Answer this last one first 🙂';
+    return false;
+  }
+
+  $('waAnswers').addEventListener('click', () => {
+    if (!finalAnswered()) return;
+    window.open('https://wa.me/?text=' + encodeURIComponent(answersText()), '_blank');
+  });
+
+  $('copyAnswers').addEventListener('click', async () => {
+    if (!finalAnswered()) return;
+    const text = answersText();
+    const status = $('copyStatus');
+    try {
+      await navigator.clipboard.writeText(text);
+      status.textContent = 'Answers copied. You can paste them into your chat and send them ♡';
+    } catch (err) {
+      const helper = document.createElement('textarea');
+      helper.value = text;
+      document.body.appendChild(helper);
+      helper.select();
+      const copied = document.execCommand('copy');
+      helper.remove();
+      status.textContent = copied ? 'Answers copied. Paste them into your chat ♡' : 'Copy was blocked by your browser. Please select and copy your answers manually.';
+    }
+  });
+
+  // ---------- Quiz → letter ----------
+  // Returns the first unanswered question (among `final` or non-final ones), or -1.
+  function firstMissing(final) {
+    return QUESTIONS.findIndex((item, qi) =>
+      !!item.final === final && !document.querySelector(`input[name="q${qi}"]:checked`));
+  }
+
+  $('toLetter').addEventListener('click', () => {
+    const missing = firstMissing(false);
+    if (missing !== -1) {
+      $('quizStatus').textContent = `Answer question ${missing + 1} first 🙂`;
+      QUESTIONS[missing].el.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    $('quizStatus').textContent = '';
+    showPage(0);
+    paper.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  // ---------- Slap / Good boy pop-ups ----------
+  const SLAPS = ['HeFEnQFovQD5wvZnpG', 'w8vfi4nbMYcnIzhIis', 'CCRmk3qpWEitItKC0J'];
+  const GOOD_BOY = 'm8dAoj30UKromR2iRb';
+  const fullUrl = id => `https://media.giphy.com/media/${id}/giphy.webp`;
+  [...SLAPS, GOOD_BOY].forEach(id => { new Image().src = fullUrl(id); }); // preload
+  const popLayer = $('popLayer'), popCard = popLayer.querySelector('.pop-card');
+  const popImg = popLayer.querySelector('.pop-stk'), popWord = popLayer.querySelector('.pop-word');
+  const popFlash = popLayer.querySelector('.pop-flash');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let slapCount = 0, popAnim = null;
+
+  function fromPoint(el) {
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2 - innerWidth / 2, r.top + r.height / 2 - innerHeight / 2];
+  }
+
+  function popup(kind, el, id, word, frames, duration, impactAt) {
+    if (popAnim) popAnim.cancel();
+    popLayer.className = 'pop-layer on ' + kind;
+    popImg.src = fullUrl(id);
+    popWord.textContent = word;
+    popWord.style.opacity = 0;
+    if (reduceMotion) {
+      popCard.style.transform = 'translate(-50%,-50%) scale(1)';
+      popWord.style.opacity = 1;
+      setTimeout(() => { popLayer.className = 'pop-layer'; popCard.style.transform = ''; }, 3000);
+      return;
+    }
+    popAnim = popCard.animate(frames, { duration, easing: 'ease-out', fill: 'forwards' });
+    popAnim.onfinish = () => { popLayer.className = 'pop-layer'; popAnim = null; };
+    setTimeout(() => {
+      popWord.animate([{opacity:0, transform:'scale(2.2) rotate(-12deg)'}, {opacity:1, transform:'scale(1) rotate(-6deg)'}],
+        { duration: 260, easing: 'cubic-bezier(.3,1.5,.5,1)', fill: 'forwards' });
+      if (kind === 'slap') {
+        popFlash.animate([{opacity:0}, {opacity:.45}, {opacity:0}], { duration: 320 });
+        document.querySelector('main').animate([
+          {transform:'translate(0,0)'}, {transform:'translate(-14px,6px)'}, {transform:'translate(12px,-8px)'},
+          {transform:'translate(-8px,4px)'}, {transform:'translate(6px,-2px)'}, {transform:'translate(0,0)'}
+        ], { duration: 420 });
+        if (navigator.vibrate) navigator.vibrate([60, 40, 90]);
+      }
+    }, duration * impactAt);
+  }
+
+  // Sticker pops from the wrong option, flies to the middle of the screen, winds up and slaps.
+  function slap(el) {
+    const [x, y] = fromPoint(el);
+    popup('slap', el, SLAPS[slapCount++ % SLAPS.length], 'SLAP!', [
+      { transform: `translate(-50%,-50%) translate(${x}px,${y}px) scale(.05)`, opacity: 0 },
+      { transform: `translate(-50%,-50%) translate(${x}px,${y}px) scale(.3)`, opacity: 1, offset: .1 },
+      { transform: 'translate(-50%,-50%) scale(1)', offset: .38 },
+      { transform: 'translate(-50%,-50%) translateX(-40px) rotate(-22deg) scale(1)', offset: .55 },
+      { transform: 'translate(-50%,-50%) translateX(36px) rotate(14deg) scale(1.3)', offset: .62 },
+      { transform: 'translate(-50%,-50%) rotate(0) scale(1.1)', offset: .72 },
+      { transform: 'translate(-50%,-50%) scale(1.1)', opacity: 1, offset: .9 },
+      { transform: 'translate(-50%,-50%) scale(.5)', opacity: 0 }
+    ], 3200, .62);
+  }
+
+  // Pop-ups queue up so a quick second tick doesn't hide the first message.
+  const calloutQueue = [];
+  function showCallout(c) {
+    if (!$('callout').hidden) { calloutQueue.push(c); return; }
+    const { stk, text } = c;
+    const holder = $('calloutStk');
+    holder.textContent = '';
+    holder.appendChild(stkImg(stk, '😤'));
+    $('calloutText').textContent = text;
+    $('callout').hidden = false;
+    $('calloutOk').focus({preventScroll:true});
+  }
+  $('calloutOk').addEventListener('click', () => {
+    $('callout').hidden = true;
+    if (calloutQueue.length) setTimeout(() => showCallout(calloutQueue.shift()), 250);
+  });
+
+  function goodBoy(el) {
+    const [x, y] = fromPoint(el);
+    popup('good', el, GOOD_BOY, 'Good boy 🐶', [
+      { transform: `translate(-50%,-50%) translate(${x}px,${y}px) scale(.05)`, opacity: 0 },
+      { transform: 'translate(-50%,-50%) scale(1.1)', opacity: 1, offset: .3 },
+      { transform: 'translate(-50%,-50%) scale(.95)', offset: .42 },
+      { transform: 'translate(-50%,-50%) scale(1)', offset: .5 },
+      { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: .88 },
+      { transform: 'translate(-50%,-50%) scale(.6)', opacity: 0 }
+    ], 2400, .32);
+  }
+
+  showPage(0);
+</script>
+</body>
+</html>
